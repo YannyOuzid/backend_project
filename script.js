@@ -76,16 +76,13 @@ app.put('/shoes', (req, res) => {
             const foundShoes = await  shoesDb.findOne({"_id": ObjectId(req.body.id)})
 
             if(foundShoes !== null){
-                let shoes = new Shoes(
-                    foundShoes.model,
-                    foundShoes.availability,
-                    foundShoes.price,
-                    foundShoes.stock)
+                let shoes = new Shoes(foundShoes.model, foundShoes.availability, foundShoes.price, foundShoes.stock)
 
                 shoes.model = req.body.model;
                 shoes.availability = req.body.availability;
                 shoes.price = req.body.price;
                 shoes.stock = req.body.stock;
+
                 try{
                     const updateResult = await shoesDb.updateOne(
                         {"_id": ObjectId(req.body.id)},
