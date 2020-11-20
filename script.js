@@ -15,8 +15,8 @@ let db, shoesDb;
 app.get('/', (req, res) => {
 
     res.send('Home Page of the project')
-})
 
+})
 
 //Get all the shoes in the database
 app.get('/shoes', (req, res) => {
@@ -29,11 +29,11 @@ app.get('/shoes', (req, res) => {
 
 })
 
-//Get one shoes by model's name
-app.get('/shoes/:model', (req, res) => {
+//Get one shoes by id
+app.get('/shoes/:id', (req, res) => {
 
     async function findOneShoes() {
-        const foundOneShoes = await shoesDb.findOne({"model": req.params.model})
+        const foundOneShoes = await shoesDb.findOne({"_id": ObjectId(req.params.id)})
         res.json(foundOneShoes);
     }
     findOneShoes();
@@ -84,9 +84,9 @@ app.put('/shoes', (req, res) => {
                 shoes.stock = req.body.stock;
 
                 try{
-                    const updateResult = await shoesDb.updateOne(
+                    await shoesDb.updateOne(
                         {"_id": ObjectId(req.body.id)},
-                        {$set:shoes})
+                        {$set:shoes});
                 } catch(err){
                     console.log(err.stack)
                 }
@@ -97,22 +97,21 @@ app.put('/shoes', (req, res) => {
             }}catch(err){
             res.send("Object id is invalid")
         }
-    };
+    }
     findShoes();
-
 })
 
-//code used to start our application
+//Code used to start our application
 async function run() {
     // try to start the application only if the database is connected correctly
     try {
         //connect to the database
         await client.connect();
         console.log("Connected correctly to server");
-        //connect to the right database ("dealership")
+        //connect to the right database ("data")
         db = client.db(dbName);
 
-        //get reference to our car "table"
+        //get reference to our shoes "table"
         shoesDb = db.collection("shoes");
 
         //start listening to requests (get/post/etc.)
@@ -123,8 +122,6 @@ async function run() {
     }
 }
 
-
-
 run().catch(console.dir);
 
 class Shoes {
@@ -134,11 +131,5 @@ class Shoes {
         this.availability = availability;
         this.price = price;
         this.stock = stock;
-    }
-
-    printValue() {
-
-        console.log(this.model, this.availability, this.price, this.stock)
-
     }
 }
