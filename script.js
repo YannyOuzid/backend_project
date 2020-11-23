@@ -54,7 +54,7 @@ app.post('/shoes', (req, res) =>{
 app.delete('/shoes', (req, res) =>{
 
     console.log('Shoes router to delete shoes');
-
+    //Find the shoes data who has the same id
     shoesDb.deleteOne({"_id": ObjectId(req.body.id)})
 
     async function findShoes() {
@@ -73,9 +73,10 @@ app.put('/shoes', (req, res) => {
     console.log(' Shoes router for update ');
     async function findShoes() {
         try{
+            //find the shoes data who has the same id
             const foundShoes = await  shoesDb.findOne({"_id": ObjectId(req.body.id)})
-
             if(foundShoes !== null){
+                //Create the new shoes object for the update
                 let shoes = new Shoes(foundShoes.model, foundShoes.availability, foundShoes.price, foundShoes.stock)
 
                 shoes.model = req.body.model;
@@ -92,7 +93,7 @@ app.put('/shoes', (req, res) => {
                 }
                 res.send("The shoes were updated");
             } else {
-                //if the shoes is not found send a message to the user saying that this entry doe not exist
+                //if the shoes are not found send a message to the user saying that this entry doe not exist
                 res.send("The shoes were not updated");
             }}catch(err){
             res.send("Object id is invalid")
@@ -124,6 +125,7 @@ async function run() {
 
 run().catch(console.dir);
 
+//Class of our object who will be used for the post and update route
 class Shoes {
 
     constructor(model, availability = false, price, stock) {
